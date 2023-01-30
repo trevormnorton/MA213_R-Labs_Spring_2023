@@ -1,0 +1,365 @@
+---
+title: "Lab02"
+author: "Trevor Norton"
+date: "1/31/2023"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+```
+
+## Basic R Data Types and Functions
+
+In this lab, we will be learning the basics of R. We will start with basic operations and data types in R, and then explain the basics of data frames. We will then conclude with an exploration of importing and analyzing data with R.
+
+This first section gives the basics of R.
+
+###
+ 
+Using the R console, you can do basic arithmetic calculations. 
+
+### 
+
+You can add/subtract two numbers together:
+```{r add_ex, include = TRUE}
+2 - (1+1)
+```
+
+###
+
+Or multiply/divide two numbers together:
+``` {r mult_ex, include = TRUE}
+(5*6) / 2
+```
+
+###
+
+Or raise a number to a power:
+```{r power_ex, include = TRUE}
+2^8
+```
+
+Try doing a combinations of operations together!
+``` {r free_calculation, exercise=TRUE}
+#REPLACE ME
+```
+
+### 
+
+Try to use what you learned to answer the question below. The exercises are not graded, but are just a way to get practice for yourself.
+
+```{r sum_and_power, echo=FALSE}
+question("In the box above, take the sum of the integers from 1 to 4 and then raise that to the power of 3. What is the result?",
+  answer("100"),
+  answer("10"),
+  answer("1000", correct = TRUE),
+  answer("25")
+)
+```
+
+###
+
+You can also work with words. In R and other programming languages, this type of data is known as "strings". (The data type for this variable is "character".) We can print strings directly to the console by running the line of code or using `print()`.
+
+``` {r hello_world, exercise = TRUE}
+#Write print("Hello world!") and run this code block
+```
+
+###
+
+It will be necessary going forward to be able to store values of calculations for later. In R, the values of variables are assigned with `<-`. (The `=` is also used for assignments.)
+```{r, include=TRUE}
+message <- "Save this message for later"
+print(message)
+```
+
+Let's assign variables to find the average of 1, 5, 7, and 10.
+```{r assign_vars, exercise=TRUE}
+# Set the variable s to be the sum of the numbers
+s <- 
+# Set the variable n to be the number of values added together
+n <- 
+# Set average to be the average of the numbers.
+average <-
+
+print(average)
+```
+
+###
+
+```{r average_check, echo=FALSE}
+question("What was the average of the four numbers above?",
+  answer("6"),
+  answer("5.75", correct=TRUE),
+  answer("10"),
+  answer("4.5")
+)
+```
+
+###
+
+Boolean or Logical data types contain True/False information. The values of these variables are either `TRUE` or `FALSE` in R (note that these are capitalized in R). Usually, these come about by applying logical orperators to other variables.
+
+###
+
+The `==` operator checks if two variables are equal. (Note that there are two equal signs, since `=` is reserved for assigning variables.) This is typically used with numeric data, but can be used for strings as well.
+
+``` {r, include = TRUE}
+print(1 == 1)
+print("Hello" == "Hello")
+```
+
+###
+
+The `<=` checks if the first variable is less than or equal to the second. We similarly have `>=`, `<`, and `>` as well. Try using these operators to determine which is bigger: `10^9` or `9^10`?
+```{r greaterthan, exercise = TRUE}
+#Determine if 10^9 or 9^10 is bigger
+```
+
+###
+
+```{r gt-exercise, echo=FALSE}
+question("Which was the bigger number?",
+  answer("10^9"),
+  answer("9^10", correct = TRUE)
+)
+```
+
+###
+
+The `&` operator checks the logical value of its arguments and returns `TRUE` if both are `TRUE` and otherwise it returns `FALSE`.
+```{r, include=TRUE}
+x <- TRUE & TRUE
+y <- FALSE & TRUE
+cat("The value of x is", x, "and the value of y is", y)
+
+```
+
+###
+
+The `|` operator checks the logical value of its arguments and returns `TRUE` if one or both arguments is `TRUE` and otherwise it returns `FALSE`.
+```{r, include=TRUE}
+x <- TRUE | TRUE #This returns TRUE
+y <- FALSE | TRUE #This also returns TRUE
+z <- FALSE | FALSE #This returns FALSE
+cat("The value of x is", x, "the value of y is", y, "and the value of z is ", z)
+
+```
+
+###
+
+```{r logic-ex, echo=FALSE}
+question("What does `(7.0 <= 4.5) | (2^3 == 8)` evaluate to? Try to find answer this without evaluating the code block. Verify the answer by copying the code into the console.", answer("TRUE", correct = TRUE),
+answer("FALSE"))
+```
+
+###
+
+We can compile information into a single objection. A vector is an object consisting of a list of values of the same data type. You can create a vector by passing values to the `c()` function.
+
+```{r vectors, exercise=TRUE}
+#Create a vector with numbers
+v <- c()
+print(v)
+# Create a vector with strings
+u <- c()
+print(u)
+```
+
+### 
+
+It is common to need a list of integers in order. This can be done using `:`. The code `i:j` will create a list of evenly spaced integers starting with `i` and ending with `j`
+
+``` {r colon, include = TRUE}
+print (1:10)
+print(5:7)
+print(2:-1)
+```
+
+The `seq()` function can be used to create list of equally spaced numbers with different step size.
+```{r seq, include = TRUE}
+seq(0,5,0.5)
+```
+
+###
+
+If you ever need information on how a function works, you can use the `?` operator. 
+```{r, include=TRUE}
+?seq
+```
+In RStudio, you can also use the TAB key to get information on a function or options to auto-complete. 
+
+## Data frames
+
+There other objects in R that are important, but for this class we will primarily be working with data frames. A data frame is an object which contains rows and columns of data, much like a spread sheet. They can be
+created by passing information to the `data.frame()` function. 
+
+```{r, include=TRUE}
+
+data <- data.frame(name = c('Neil', 'John', 'Trevor', 'Olivia'),
+                   test_scores = c(100, 93, 67, 90),
+                   is_professor = c(TRUE, FALSE, FALSE, FALSE))
+
+print(data)
+
+```
+
+###
+
+The value at a specific row and column in a data frame can be extracted by passing in the row number and column number.
+
+``` {r, include = TRUE}
+# This prints the value at row 1, column 3 of the data frame.
+print(data[1,3])
+```
+
+Note that the indexing in R starts at 1. Also we use brackets `[]` to access the elements of the data frame; parentheses `()` are reserved for functions.
+
+###
+
+We can use arrays of integers to access multiple rows and columns. 
+``` {r, include = TRUE}
+print(data[2:3, 1:2])
+print(data[c(1,2,3), c(2,3)])
+```
+
+###
+
+``` {r slices, echo=FALSE}
+c1 <- data[c(1,3), c(1,3)]
+c2 <- data[1,1]
+c3 <- data[3,3]
+c4 <- data[1:3,1:3]
+question("What does `data[c(1,3), c(1,3)]` evaluate to?", answer(toString(c1), correct = TRUE), answer(toString(c2)), answer(toString(c3)), answer(toString(c4)))
+```
+
+###
+
+One can specifically get vectors of just the columns using `$` and the column name.
+
+``` {r, include = TRUE}
+data$name
+```
+
+## Importing Data
+
+We can use `getwd()` to find the current directory we are working in.
+
+```{r, include=T}
+getwd()
+```
+
+R Studio has local access to the files in your working directory. If you want to change this location, go to "Session->Set Working Directory" in R Studio and choose a new location. It will be convenient to create a separate folder for all your R files and set that as your working directory.
+
+###
+
+Now we want to read in data from another file to manipulate and analyze in R. Most files we will be working with will be CSV files. "CSV" stands for "Comma Separated Values" and contains tables of data, much like an excel document. One can import CSV files directly into R and convert them into data frames. This is done with the `read.csv()`. We simply pass in a string with the file location of the CSV we want to read in. For labs, there will be a folder with the files we need called "data". So we can read in files using "data/<filename>". Read in the file "cars.csv" and look over the information in the data frame.
+
+```{r read_data, exercise=TRUE}
+data <- read.csv("data/REPLACETHIS")
+# Use str to get some basic information of your data frame.
+str(data)
+```
+
+###
+
+Before we begin to analyze the data in earnest, we need to learn how to select subsets of the data. We have already seen how to select certain rows or columns, but we will also need to select elements of a data frame based on conditional statements. For instance, for the data set above we might be interested only in analyzing cars that cost more than $25,000. Thus we need a way to select the rows of the data frame corresponding to car with a price greater than 25000. We can do this using vectors of logical values. Consider the following code.
+
+```{r, include=TRUE}
+cars <- read.csv("data/cars.csv")
+is_expensive_car <- cars$Price >= 25000
+str(is_expensive_car)
+```
+
+The output `is_expensive_car` is a vector of logical vectors which is `TRUE` if the car is more expensive than $25,000 and `FALSE` otherwise. 
+
+###
+
+We can then pass this back to the data frame to select only the rows corresponding the cars we want to analyze.
+
+
+```{r, include = TRUE}
+cars[is_expensive_car,]
+```
+
+Scrolling over to the last column confirms that we now only have cars that are more expensive than $25,000. 
+
+###
+
+This can all be done in one step without having to assign a variable.
+```{r, include=TRUE}
+cars <- read.csv("data/cars.csv")
+cars[cars$Price >= 25000, ]
+```
+
+###
+
+```{r filter-question, echo=FALSE}
+question("Which of the following will output a data frame object  consisting of cars released between 1970 and 1979 (inclusive) and made in the USA?", answer("cars[c(2,3),]"), answer("cars[cars$Model.Year == 1970 | cars$Country == \"USA\", ]"), answer("cars[(cars$Model.Year <= 1979) | (cars$Model.Year >= 1970) | (cars$Country == \"USA\"), ]"), answer("cars[(cars$Model.Year <= 1979) & (cars$Model.Year >= 1970) & (cars$Country == \"USA\"), ]", correct=TRUE))
+```
+
+## Basic statistics
+
+### 
+
+We can now to start to analyze our data using R. We will import the "cars.csv" file that we were using before.
+
+```{r, include=TRUE}
+cars <- read.csv("data/cars.csv")
+str(cars)
+```
+
+###
+
+We have talked about measures of central tendency in class. The most common measures are mean and median. These have built-in functions in R.
+
+``` {r, include = TRUE}
+mean_price <- mean(cars$Price)
+median_price <- median(cars$Price)
+cat("The mean price of cars is", mean_price, " and the median price is ", median_price)
+```
+
+###
+
+We also have measures of spread for the data. R has built-in functions to compute the *sample* variation and standard deviation.
+``` {r, include = TRUE}
+sample_var_mileage <- var(cars$Mileage)
+sample_sd_mileage <- sd(cars$Mileage)
+cat("The sample variance of the gas mileage is", sample_var_mileage, "and the sample standard deviation is", sample_sd_mileage)
+```
+
+###
+
+Now we can put everything together to start to answer some questions about the data. Use the space below to answer the following questions. (You can also work directly in the RStudio console if you prefer, you just need to import the data yourself.)
+```{r filter_and_stats, exercise = TRUE}
+#Import the data into a data frame.
+cars <- read.csv("data/cars.csv")
+
+#Analyze the data here
+
+```
+
+```{r question-1, echo=FALSE}
+question("What was the avergage gas mileage for cars made in 1980?", answer("33.70", correct=TRUE), answer("23.51"), answer("32.70"), answer("17.69"))
+```
+
+###
+
+```{r question-2, echo=FALSE}
+question("What was the median price of cars weighing more than 4000 pounds or whose gas mileage was under 15?", answer("$29026.94"), answer("$28552.01", correct = TRUE), answer("$30000.00"), answer("$29684.47"))
+```
+
+###
+
+```{r question-3, echo=FALSE}
+question("What is the sample standard deviation in the weight of cars produced in Japan?", answer("846.84 lbs"), answer("102718.5 lbs-squared"), answer("2970.42 lbs"), answer("320.50 lbs", correct = TRUE))
+```
+
+###
+
+Congrats! You finished the lab. If you would like to clear your work and repeat the lab, you can click the "Start Over" button on the left. 
