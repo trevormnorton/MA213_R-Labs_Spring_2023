@@ -1,0 +1,84 @@
+---
+title: 'Lab 3: Investigating your data set'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+In this lab, you will be working on your next deliverable "Description of Data Set". You can find the documentation for the deliverable under the Lab Materials tab in Blackboard.
+
+## Discuss the data collection
+
+If you are using an existing data source, start to look into how the data was collected. Discuss the following points in your group:
+
+* How was the data collected?
+* Is there potential bias in the sample? For instance, can we say whether the sample was randomly sampled?
+* How does the way the data was collected potentially impact the future results of the study?
+
+
+
+If you are creating your own data set, then you can discuss the following questions:
+
+* How will the data be assembled? Will the sample be a randomly chosen set from the population of interest?
+* How can we guarantee the sample is representative of the population?
+* If you are collecting data with a survey, consider potential pitfalls. For instance, making sure to gather all necessary information from the survey and not leaving off any questions. Making sure your answers are the right data types (if you want a continuous variable for "Height" then you should have an interval of possible values instead of a discrete number of options.)
+
+Start to brainstorm survey questions, and begin to discuss how to collect the data.
+
+## Import your data 
+
+Start by importing your data into RStudio. For most groups, your data set is in the form of a CSV file. So you can import your data using `read.csv()`. Check if your file is in your working directory. Otherwise you will need to specify the file location as well. You can see your current working directory by using `getwd()` in the console.
+
+```{r}
+car_data <- read.csv("cars.csv")
+```
+
+You can see what data types are in the imported data fram by using the "Environment" window in RStudio. You can alternatively use the `str()` function.
+
+```{r}
+str(car_data)
+```
+
+In your group, answer the following questions:
+
+* How many rows are there?
+* How many columns/variables are there?
+* Determine the data types for each column. 
+
+## Missing Data and Outliers
+
+Your group can now start to determine if there is any missing data or outliers that need to be addressed. The methods used to clean data can vary between data sets. One way to find missing data is to look for `NA` values. We can determine the number of `NA` values in each column using the following code snippet:
+
+```{r}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+Then in my data I have 6 `NA` values in the column `HP`. We can filter our data frame to get these rows.
+
+```{r}
+car_data[is.na(car_data$HP),]
+
+```
+* Is there data missing from your data set?
+* What are possible causes for the missing data?
+* Discuss how to deal with the data analysis in light of these results.
+
+We can also find outliers in the data. A box plot is an easy way to do this for a single variable
+```{r}
+boxplot(car_data$Mileage)
+```
+
+We have an outlier in the `Mileage` column. We can filter the data set to find out more details.
+
+```{r}
+car_data[which.max(car_data$Mileage),]
+```
+
+* Are there any outliers in your data set?
+* What are the possible causes for the outlier? That is, is it in fact a naturally occurring extreme value of the data or is there a reason to think the data point is not naturally occurring?
+* How should your outliers be dealt with? Should the outlier be dropped? Why or why not?
+
+## Deliverable details
+
+The next deliverable will be due February, 27th before the end of the day. You should make plans with your team to finish the deliverable by the deadline. Also, comments from the previously deliverable will be returned to you soon, so make changes to your project based on those. I may ask you to choose a different data set if the original choice is not useable. 
+
