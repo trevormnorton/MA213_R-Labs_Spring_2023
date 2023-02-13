@@ -1,0 +1,160 @@
+---
+title: "Lab 4: Finding linear relationships between variables"
+output: pdf_document
+---
+
+At this point, we have had practice with importing our data and filtering it 
+based on conditional statements. In this lab, we will use R to look for linear
+relationships between variables in our data set. We will also practice using R
+to do linear regression.
+
+## Import the data and filter it
+
+The data set we will be working with in this lab can be found on Blackboard. 
+Go to "Learning Resources" and then "Data Sets" on the course site and download
+the cars data set. Place `cars.csv` in your working directory (if you don't know
+where that is, run `getwd()` in your console). We can now read in the data set.
+Create a data frame called `car_data` from the CSV file and get a summary of its
+columns.
+
+``` {r}
+car_data <- read.csv("cars.csv")
+str(car_data)
+```
+
+This data set is a sample of cars manufactured between 1970 and 1982. The columns
+in the data set include the year the car was released, its gas mileage, the 
+number of cylinders it has, its engine displacement (essentially, a measure of 
+the size of the engine), and other variables.
+
+We will be interested in US cars for this lab, so we will create a new data 
+frame `US_cars` to use for this lab.
+
+**Task**: Create a data frame called `US_cars` which consist of all rows of 
+`car_data` where `Country` equals "USA". 
+
+```{r, include=FALSE}
+US_cars <- car_data[car_data$Country == "USA",]
+```
+
+It might help to refer to earlier labs to see how to filter data.
+
+## Finding correlations between variables
+
+Let us now start to analyze the new data frame. A good place to start when 
+investigating a new data set is to look for correlations between the variables.
+This is useful for finding relationships between the data and also for detecting
+possibly redundant data. The `cor()` function can be used to get correlations 
+between vectors. The line `cor(1:5, 4:8)` returns the correlation coefficient 
+between `(1,2,3,4,5)` and `(4,5,6,7,8)`, which ends up being `1` since these
+vectors are linearly related. The `cor()` function can also be applied to data
+frames with numerical data. Let's use this to find the correlation coefficients 
+between columns of our data frame. 
+
+**Task**: Run the command 
+<p style="text-align: center;">`cor(US_cars[,-which(names(US_cars) %in% c("Car","Country"))],use="pairwise.complete.obs")`</p>
+This finds the correlation between the numeric columns of `US_cars`. The 
+`-which(...)` statement is used to exclude the non-numerica columns `Car` and 
+`Country`. The `use="pairwise.complete.obs"` is for dropping `NA` data so that 
+each pair of variables has a correlation coefficient.
+
+**Discuss**: You should see the correlation matrix of all the pairwise correlations
+of the numeric columns of `US_cars`. Discuss the following with your group:
+
+* Are there any symmetries or patterns in the data set? Why is that?
+* Which variables appear to be highly correlated (positively or negatively)? Is 
+there an apparent reason why these variables should be correlated?
+
+```{r, include=FALSE}
+cor(US_cars[,-which(names(US_cars) %in% c("Car","Country"))],use="pairwise.complete.obs")
+```
+
+## Linear regression in R
+
+You've talked in class about doing linear regression by hand. Using R, we can 
+easily compute linear regression between two (or more) variables. For this lab,
+we will be using the `lm()` command. Let's look at the Employee Summary data set
+first to see how this is done.
+
+```{r}
+employee_data <- read.csv("Employee_Summary.csv")
+lr_payvshours <- lm(Pay_Amount~Hours_Worked, data = employee_data)
+summary(lr_payvshours)
+```
+
+The first argument tells us the variables we are using for the regression. Here
+`Pay_Amount ~ Hours_Worked` means we regress the total pay on the hours worked.
+That is, we fit the model $Y = \beta_0 + \beta_1 X + \epsilon$ with $Y = \text{Pay Amount}$ 
+and $X = \text{Hours Worked}$.
+
+The `summary(...)` line gives us a lot of information about the linear 
+regression (some of which will be useful for us later in the project). We can 
+off the value of the y-intercept and slope for the line of best fit by looking 
+under `Coefficients:`. Here we have that the slope is `31.568` which means every 
+additional hour worked corresponds to an average increase in pay of about $31.57.
+
+The `Multiple R-squared` is the $R^2$ value. It is around $84\%$, which means
+that $84\%$ of the variation in pay is due to hours worked. This suggests a strong
+linear relationship between the two variables.
+
+Let's return to `US_cars` and do a linear regression with this data. We want to 
+determine how the weight of a car affects its gas mileage.
+
+**Task**: Set `lr_mileage_vs_weight` to be the result of running a linear regression
+between the `Mileage` and `Weight` columns of `US_cars`. We want `Mileage` to be
+the response variable (i.e. the $Y$) and `Weight` to be the predictor (i.e. the $X$). 
+
+**Discuss**: Determine the following in your groups:
+
+* Use the coefficients and $R^2$ value to determine if there is a positive/negative correlation 
+between the variables and whether there is a strong linear relationship. 
+* How do you interpret the slope of the best fit line in this context?
+* Run the following code to plot the data and the line of best fit:
+<p style="text-align: center;"> `plot(US_cars$Weight, US_cars$Mileage)`</p>
+<p style="text-align: center;"> `abline(lr_mileage_vs_weight)`</p>
+Does this plot confirm you earlier answers?
+
+```{r, include=FALSE}
+lr_mileage_vs_weight = lm(Mileage~Weight, data = US_cars)
+plot(US_cars$Weight, US_cars$Mileage)
+abline(lr_mileage_vs_weight)
+```
+
+## Examining Gas Mileage of Cars by Model Year in US cars
+
+To conclude the lab, we will try to examine the relationship between gas mileage
+and the year the car was released. 
+
+**Tasks**:
+
+* Plot the gas mileage of the cars versus the model year. There should be a slightly
+positive linear relationship between the two. However, there seems to be an uptick
+sometime around 1979. Let's see if we can detect this change using linear regression.
+* Create two new data frames: `US_cars_pre79` and `US_cars_post79`. The former 
+data frame should include all cars made before 1979 and the latter data frame 
+should include all US cars made in or after 1979.
+* Do two linear regressions using the `US_cars_pre79` and `US_cars_post79` data frame
+and set the results to `lr_mileage_pre79` and `lr_mileage_post79`, respectively. 
+Your response variable should be gas mileage and the predictor should be model 
+year for each linear regression.
+
+**Discuss**:
+
+* Look at the slopes for both lines of best fit. How would you interpret the slopes
+in this context? 
+* Does there seem to be a significant difference in the increase in gas mileage
+before and after 1979? Plot the Mileage versus the Year along with both best fit
+lines. How well do the lines match with the data? 
+* What might explain this change in the gas mileage? What happened in 1979 that
+might have motivated US manufactures to increase the gas mileage of their cars?
+(You can search "1979 oil crisis" for more information.)
+
+```{r, include=FALSE}
+US_cars_pre79 <- US_cars[US_cars$Model.Year < 1979, ]
+US_cars_post79 <- US_cars[US_cars$Model.Year >= 1979, ]
+lr_mileage_pre79 <- lm(Mileage~Model.Year, data = US_cars_pre79)
+lr_mileage_post79 <- lm(Mileage~Model.Year, data = US_cars_post79)
+plot(US_cars$Model.Year, US_cars$Mileage)
+abline(lr_mileage_pre79)
+abline(lr_mileage_post79)
+```
