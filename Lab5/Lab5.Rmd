@@ -1,0 +1,179 @@
+---
+title: "Lab 5: Writing Hypotheses"
+output: pdf_document
+---
+
+At this point, you should have finalized your data set and posed questions that
+you would like to answer with it. Before you wrote your questions in plain 
+language. Now we will start to convert those questions into statements about 
+population parameters. This way, we can estimate the parameters with statistics
+and make an argument about the questions we posed. Later, we will carry out
+**hypothesis testing** to determine which hypotheses should be rejected. 
+
+## Identifying populations, parameters, and variables
+
+In your group, go back through the questions you posed in deliverable 1 and
+discuss how they can be re-framed as statements about parameters of a population.
+For each questions, determine the following:
+
+* What are the populations of interest? (There may be one or more populations.)
+* What variables are involved? Are they qualitative or quantitative? Does this 
+correspond to information in your data set?
+* Can you identify the parameter of interest? Mean? Population proportion? 
+Population variance? Slope of the best fit line?
+* What are you trying to prove about the parameters? Can you write this as an 
+inequality? (For example, you might want to show that a proportion is greater 
+than 50% in which case you can write $p>0.5$.)
+
+
+## Writing the null and alternative hypotheses.
+
+Now let's look at writing our hypotheses down. For hypothesis testing, we have 
+a **null hypothesis** and an **alternative hypothesis**. The *null hypothesis*
+is our "default" assumption. Typically, this correspond to assuming that our 
+population is not significant or a treatment has no effect. The *alternative hypothesis* 
+on the other hand is the effect we wish to show. This typically corresponds with
+our population being "significant" in some way or some treatment having a response.
+
+For a simple example, we may be interested in testing whether the heights of male
+students at BU differs from male students at other US schools. In this case, our 
+null hypothesis is that "Male students at BU have the same average height as 
+male students at other universities". This supposes that BU is *not significant*
+in terms of other universities. The alternative hypothesis would be "Male students
+at BU have a different average height than male students at other universities".
+Supposing the average height of male students at US universities is 5.9 feet, then 
+the hypotheses would be written as $H_0: \mu = 5.9$ and $H_a: \mu \neq 5.9$. *Note*:
+the assumed value of the null hypothesis depends on the context of the problem. 
+We could have easily made the null hypothesis the average height of men in the US 
+or men globally, which will affect our analysis. Think carefully about what you 
+want to show and which populations you are comparing.
+
+**Task**: as a group, begin to write down your hypotheses. For the project you should
+have *four* sets of hypotheses. One set should compare two different populations 
+and their parameters. For each set, you should have the following:
+
+* A null hypothesis.
+  * This should be in the form of "parameter = [default]". Think about the 
+  context of the problem when coming up with this hypothesis.
+  * E.g. $H_0 : p = 0.5$ where $p$ is the population proportion.
+* An alternative hypothesis.
+  * This should be in the form of "parameter > [default]" (or "<" or "=/="). This
+  should be the hypothesis you are trying to show. This will imply that your 
+  population or treatment is significant in some way.
+  * E.g $H_a :p > 0.5$ or $H_a: p <0.5$ or $H_a: p \neq 0.5$.
+  
+You may need to adjust your earlier questions if they cannot easily be written 
+as hypothesis tests.
+
+## Deliverable details
+
+The next deliverable is due ~~March 20th~~ March 24th. You should make plans with your team to finish the deliverable by the deadline. Also, comments from the previously deliverable will be returned to you soon, so make changes to your project based on those.
+
+## Bonus: Lots and lots of examples
+
+Since we have have not gotten to hypothesis testing, it may be intimidating to 
+write the hypothesis. And it might be difficult to know what a valid set of 
+hypotheses looks like. In light of this, I am giving you many examples of 
+hypotheses, so that you may choose one based on the needs of your group. I may
+leave some options out, so if you have questions don't hesitate to talk to John
+or I (Trevor).
+
+### Hypothesis test for mean
+
+This test can be used to determine if the mean of a population is different/less/greater
+than some baseline assumption. This can be used to analyze a *quantitative variable*.
+
+*Hypotheses* $$H_0 : \mu = \mu_0 $$ $$H_a:\mu \neq \mu_0 $$ where $\mu_0$ is the 
+assumed mean for the null hypothesis. The $\neq$ in $H_a$ can also be replaced by a
+$>$ or $<$.
+
+*Example* Suppose you wanted to show that basketball players are BU are taller than the average American. Then your population would be “Basketball players at BU” and the parameter you are testing is the mean height, measured in feet. If the average height of an American is 5.67 feet, then your null and alternative hypotheses would be $H_0: \mu = 5.67$ and $H_a: \mu > 5.67$.
+
+### Hypothesis test for proportion
+
+This test can be used to determine if a population proportion is different/less/greater
+than some baseline assumption. This can be used to analyze a *qualitative variable*.
+
+*Hypotheses* $$H_0 : p = p_0 $$ $$H_a:p \neq p_0 $$ where $p_0$ is the 
+assumed proportion for the null hypothesis. The $\neq$ in $H_a$ can also be replaced by a
+$>$ or $<$.
+
+*Example* Suppose that you want to test whether a certain strategy will help someone win games of rock-paper-scissors. For example, you want to see if always throwing “Paper” will be a better-than-chance strategy. The population of interest would be all games of rock-paper-scissors where this strategy is used and the parameter would be percentage of games won by the strategy user. The hypotheses would be $H_0 : p = 0.5$ and $H_a: p > 0.5$.
+
+### Hypothesis test for the $\beta_1$
+
+This test can be used to determine if two variables are linearly correlated. This
+can be used to analyze the relationship between *two quantitative variables*. For
+this test, you will need to assume that two variables $X$ and $Y$ are linearly 
+related, i.e., $Y = \beta_0 + \beta_1 X + \epsilon$. Then there is a positive 
+correlation if $\beta_1 > 0$ and a negative correlation if $\beta_1 < 0$. If 
+$\beta_1 = 0$, then there is no correlation.
+
+*Hypotheses* $$H_0 : \beta_1 = 0$$ $$H_a: \beta_1 \neq 0$$ The $\neq$ in $H_a$ can also be replaced by a $>$ or $<$.
+
+*Example* Suppose we want to show that the minutes per day of exercise is positively correlated with the height of American children. In this case, the population of interest would be American children. If we assume that there is a linear relationship $Y = \beta_0 +\beta_1 X + \epsilon$ between $X$ = “minutes of exercise” and $Y$= “height in inches”, then the parameter we want is $\beta_1$, the slope of the best-fit line. Our null and alternative hypotheses would be $H_0: \beta_1 = 0$ and $H_a: \beta_1 > 0$.
+
+### Hypothesis test for comparing two means from independent samples
+
+This test can be used to determine if there is a difference between the means of 
+two different populations. This can be used to analyze a *quantitative variable*.
+
+*Hypotheses* $$H_0 : \mu_1 = \mu_2 $$ $$H_a:\mu_1 \neq \mu_2 $$ where $\mu_1$ and 
+$\mu_2$ are the means from population 1 and 2, respectively.The $\neq$ in $H_a$ 
+can also be replaced by a $>$ or $<$.
+
+*Example* Suppose you want to compare the GPAs between colleges and you think that Math majors would have lower GPAs than Computer Science majors. Then your populations would be “All Math majors” and “All Computer Science majors” and your parameters would be the mean GPA of all Math and Computer Science majors. Your null and alternative hypotheses would be $H_0: \mu_{math} = \mu_{cs}$ and $H_a: \mu_{math} < \mu_{cs}$.
+
+### Hypothesis test for comparing two proportions from independent samples
+
+This test can be used to determine if there is a difference between the means of 
+two different populations. This can be used to analyze a *qualitative variable*.
+
+*Hypotheses* $$H_0 : p_1 = p_2 $$ $$H_a:p_1 \neq p_2 $$ where $p_1$ and 
+$p_2$ are the proportions from population 1 and 2, respectively.The $\neq$ in $H_a$ 
+can also be replaced by a $>$ or $<$.
+
+*Example* Suppose you are interested in the voting patterns of students from
+private and public universities in the US. You think there is likely a difference
+in the percentage of students who voted in the last presidential election from these groups.
+The populations would be "Private school students in the US" and "Public school
+students in the US", and your parameters of interest would be the proportion from
+each group that voted in the last presidential election. You null and alternative 
+hypotheses would be $H_0 : p_{private} = p_{public}$ and $H_a: p_{private} \neq p_{public}$.
+
+### Hypothesis test for comparing means from a paired sample
+
+This test can be used to determine if there is a difference of means when comparing
+the same population. This is typically done when each individual in a sample undergoes a treatment and you want to measure the effect. This can be used to analyze a *qualitative variable*.
+
+*Hypotheses* $$H_0 : \mu_d = 0$$ $$H_a:\mu_d \neq 0 $$ where $\mu_d$ is the 
+difference of means (i.e., $\mu_d = \mu_1 - \mu_2$). The $\neq$ in $H_a$ can also be replaced by a $>$ or $<$.
+
+*Example* Suppose you want to decide if streaming viewership increased after 2020 
+by deciding if the average amount of time US adults spend watching streaming 
+services in minutes increased from 2019 to 2021. The population in this case is 
+all US adults and the parameter of interest is $\mu_d = \mu_{2021} -\mu_{2019}$
+where $\mu_{2021}$ = "Mean # of minutes watching streaming services in 2021" and
+$\mu_{2019}$ = "Mean # of minutes watching streaming services in 2019". The null 
+and alternative hypotheses would be $H_0 : \mu_d = 0$ and $H_a: \mu_d > 0$.
+
+
+### Others
+
+It is also possible to write hypothesis tests for variance or comparing variances
+of two different populations. The hypotheses can be written in a similar way to
+those for means/proportions.
+
+(The following won't be covered in the course but are fairly common hypothesis tests.)
+
+A common hypothesis test is the "Goodness of fit". This is useful for deciding
+if the distribution for a qualitative variable is of a certain form. For instance,
+you can use this test to decide if there is an equal proportion of students who 
+are Freshmen/Sophomores/Juniors/Seniors at BU with hypotheses $$H_0 : p_{freshman} = p_{sophomore} = p_{junior} = p_{senior}$$ $$H_a : \text{one } p_i \text{ is different}$$
+
+
+To test *more than two means* requires other tests. Using analysis of variance
+(ANOVA), it is possible to decide if one or more means are different. That is
+it can be used to run a hypothesis test with $$H_0: \mu_1 = \mu_2 =\cdots=\mu_n$$ 
+$$H_a: \text{one of the } \mu_i's \text{ is different}$$ This is useful for
+comparing *multiple* treatments.
