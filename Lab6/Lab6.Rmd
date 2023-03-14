@@ -1,0 +1,197 @@
+---
+title: 'Lab 6: Data Visualizations with `ggplot2`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+```
+
+## Introduction to `ggplot2`
+
+Previously, we have done plotting and graphs with the built-in function for R.
+However, in this lab we will start using `ggplot2` to create attractive visuals.
+This library will be useful for doing the data visualization for your project.
+
+**Task**: Check if `ggplot2` is installed on your system. You can do this by 
+simply running `?ggplot2` in your console and seeing if there is documentation.
+If you need to install this library, run the following
+``` 
+install.packages("ggplot2")
+```
+
+For this lab, we will be saving and building plots using `ggplot2`, so I would
+suggest creating a new R script to document your work. To import the library 
+into your current environment, run `library(ggplot2)`.
+
+The `ggplot2` library is based on the "grammar of graphics", the idea being that
+you can build every graph from the same components: a data set, a coordinate
+system, and geoms (visual marks that represent the data points). We will only be
+doing a shallow exploration of what `ggplot2` can do. In this lab, we will typically 
+define the data set using `ggplot()` and an aesthetic mapping using `aes()` and
+then build on this object by adding layers.
+
+## The basics and creating bar plots
+
+When working with `ggplot2`, we can initialize plot objects and then layer on 
+additional information to create our visualization. One of the simplest graphs
+is a bar plot. This will be useful when analyzing a categorical variable or 
+comparing counts. 
+
+Let's import a data set. The `"presidential"` data set contains information about
+the last 12 presidents of the United States. We can import it using `data("presidential")`. (This is a built-in data set for R, so you should not need to download anything.) 
+Let's make a basic bar plot graphing the number of times each party help the presidency.
+We can create a `ggplot` object like so
+``` {r, include=TRUE}
+data("presidential")
+PresidentsBarPlot <- ggplot(data = presidential, aes(x = party))
+```
+This designates the data to use (the presidential data set) and the 
+x-cooridinate (the party of the president), but we still need to specify how to 
+visualize the data. We can do this by adding a `geom_bar()`. We can view the 
+graphic by using `print()`.
+```{r, include = TRUE}
+print(PresidentsBarPlot + geom_bar(stat="count"))
+```
+Note that we did not need to specify the data and
+coordinates again since this was saved in the `PresidentsBarPlot` object. Also, we added on additional features to the object by doing `+ <layer>`. This 
+is getting us closer, but it's missing a title. Also, we'd like to color the 
+bars to make it a little more interesting. Additional features can be added by
+creating extra layers. 
+
+``` {r, include = TRUE}
+data("presidential")
+PresidentsBarPlot <- ggplot(data = presidential, aes(x = party, fill=party)) +
+  geom_bar(stat="count") +
+  scale_fill_manual(values = c("blue", "red")) + 
+  ggtitle("Parties of recent presidents")
+print(PresidentsBarPlot) 
+```
+
+The above bar plot is looking better. We now have a title due to adding 
+`ggtitle("Parties of recent presidents")`. We can designate the color of the 
+bars based on the party with the additional argument `fill = party`. The line
+`scale_fill_manual(values = c("blue", "red"))` changes the default colors to 
+the more traditional political party colors.
+
+**Task**: You will create your own box plot as above. Do the following to build 
+your plot.
+
+- Import the "mpg" data set using `data("mpg")`. This data set include details of 
+cars manufactured from 1999 to 2008.
+- Create a ggplot object called `CarPlot` where the x-coordinate and the fill color are given by `class`.
+- Add a `geom_bar(stat="count")` and `ggtitle()` layer to `CarPlot` and print the result.
+If you did everything correct, you should get a plot like below.
+
+```{r, echo=FALSE}
+data("mpg")
+CarPlot <- ggplot(data = mpg, aes(x = class, fill=class)) + geom_bar(stat = "count")
+print(CarPlot + ggtitle("Class of cars"))
+```
+
+## Estimating distributions with histograms and violin plots
+
+Moving now to analyzing quantitative variables, we generally want graphs which 
+will give us an idea about the distribution of the variable. One way to do this
+is with a histogram. Creating one is similar to a bar plot.
+
+```{r}
+GasPlot <- ggplot(data = mpg, aes(x= hwy)) + 
+  geom_histogram(fill="blue", alpha = 0.5, binwidth = 2.5) +
+  ggtitle("Distribution of Highway Gas Mileage") +
+  labs(x="Highway Mileage")
+print(GasPlot)
+```
+
+Another popular option for getting a sense of the distribution of a variable is
+with violin plots. We can get an idea for how to read such a chart with an example.
+
+```{r}
+data("iris")
+IrisPlot <- ggplot(data = iris, aes(x=Species, y = Petal.Length, fill=Species)) + 
+  geom_violin() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5, fill="white") +
+  ggtitle("Distribution of Petal Length by Species of Iris")
+print(IrisPlot)
+```
+Here we have plotted a violin plot for each species of iris in order to determine
+the distribution of petal lengths. The outside of the violin plot will expand if 
+more points are located near there, making the plot look like a violin. Plotting
+the points of the distribution on top of the graphs emphasizes this (although
+we do not *need* the points for the plot). This is a convenient way to quickly compare the 
+distributions of several populations quickly.
+
+**Task**: Recreate the graph below as follows:
+
+- Import the `iris` data set.
+- Construct a violin plot of Petal Width by species. Make the fill color the
+species type.
+- Add a title and set the colors of the fill to "purple", "pink", and "lavender".
+
+```{r, echo=FALSE}
+data("iris")
+IrisPlot2 <- ggplot(data = iris, aes(x=Species, y = Petal.Width, fill=Species)) + 
+  geom_violin()  +
+  ggtitle("Distribution of Petal Width by Species of Iris") +
+  scale_fill_manual(values = c("purple", "pink", "lavender")) 
+print(IrisPlot2)
+```
+
+## Scatterplots
+
+Finally, if we want to compare two quantitative variables, then scatter plots will
+be the most appropriate way to visualize this. Returning against to the iris data
+set, let's see how sepal length is related to petal length
+
+```{r}
+data("iris")
+IrisScatter <- ggplot(data = iris, aes(Sepal.Length, Petal.Length)) + 
+  geom_point() + 
+  ggtitle("Petal Length vs Sepal Length")
+print(IrisScatter)
+```
+
+There seems to be an obvious correlation between these variables. But there are
+clusters in the data. What is causing this? We can get some insight by coloring 
+based on species.
+
+```{r}
+data("iris")
+IrisScatter <- ggplot(data = iris, aes(Sepal.Length, Petal.Length, color=Species)) + 
+  geom_point() + 
+  ggtitle("Petal Length vs Sepal Length")
+print(IrisScatter)
+```
+
+By coloring, we can see the clustering is caused by the different species. We can get
+a better idea about the coorelations within the species by plotting lines of best
+fit.
+
+```{r}
+print(IrisScatter + geom_smooth(method = lm))
+```
+**Task**: Recreate the plot below by doing the following:
+
+- Import the data set `mpg` using `data("mpg")`. Then filter the data set to only
+include cars with class "compact" or "suv". *Hint*: the code `mpg$class %in% c("compact", "suv")` will give you a vector of logical values correspond to the rows where
+the class is either "compact" or "suv". You can use this to filter the data set.
+- Create a scatter plot with the filtered data set. Set the color to correspond
+with the class of car.
+- Set the title using `ggtitle(...)` and the axis labels using `labs(x=...,y=...)`.
+
+
+```{r, echo=FALSE}
+compact_and_suv = mpg[mpg$class %in% c("compact", "suv"), ] 
+CarScatter <- ggplot(data = compact_and_suv, aes(cty, hwy, color=class)) +
+  geom_point() + 
+  labs(x="City", y="Highway") +
+  ggtitle("Highway vs City Gas Mileage")
+print(CarScatter)
+```
+
+## Moving forward
+
+You hopefully have some idea of what can be done using `ggplot2` after this lab.
+I'd encourage you to try importing some of your own data into R and making some 
+plots of your own. When working, make sure to save the code to construct your plots
+so that you can recreate them if necessary. 

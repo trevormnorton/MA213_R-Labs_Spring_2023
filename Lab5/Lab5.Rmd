@@ -105,13 +105,13 @@ $>$ or $<$.
 This test can be used to determine if two variables are linearly correlated. This
 can be used to analyze the relationship between *two quantitative variables*. For
 this test, you will need to assume that two variables $X$ and $Y$ are linearly 
-related, i.e., $Y = \beta_0 + \beta_1 X + \epsilon$. Then there is a positive 
+related, i.e., $Y = \beta_0 + \beta_1 X + \text{``noise"}$. Then there is a positive 
 correlation if $\beta_1 > 0$ and a negative correlation if $\beta_1 < 0$. If 
 $\beta_1 = 0$, then there is no correlation.
 
 *Hypotheses* $$H_0 : \beta_1 = 0$$ $$H_a: \beta_1 \neq 0$$ The $\neq$ in $H_a$ can also be replaced by a $>$ or $<$.
 
-*Example* Suppose we want to show that the minutes per day of exercise is positively correlated with the height of American children. In this case, the population of interest would be American children. If we assume that there is a linear relationship $Y = \beta_0 +\beta_1 X + \epsilon$ between $X$ = “minutes of exercise” and $Y$= “height in inches”, then the parameter we want is $\beta_1$, the slope of the best-fit line. Our null and alternative hypotheses would be $H_0: \beta_1 = 0$ and $H_a: \beta_1 > 0$.
+*Example* Suppose we want to show that the minutes per day of exercise is positively correlated with the height of American children. In this case, the population of interest would be American children. If we assume that there is a linear relationship $Y = \beta_0 +\beta_1 X + \text{``noise"}$ between $X$ = “minutes of exercise” and $Y$= “height in inches”, then the parameter we want is $\beta_1$, the slope of the best-fit line. Our null and alternative hypotheses would be $H_0: \beta_1 = 0$ and $H_a: \beta_1 > 0$.
 
 ### Hypothesis test for comparing two means from independent samples
 
