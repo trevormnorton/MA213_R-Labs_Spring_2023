@@ -1,0 +1,104 @@
+---
+title: "Lab 8"
+output: pdf_document
+---
+
+Your next deliverable is on Data Visualizations. This document will give some 
+examples of plots that can be done using `ggplot2`. You will need to import the
+`ggplot2` library to work with the functions.
+
+```{r setup, include=TRUE}
+library(ggplot2)
+# We will give some examples 
+data("diamonds")
+```
+
+This lab will give some examples of plots to be included in your paper.
+
+## Bar plots
+
+You will want to check that your population is representative. One way to do that
+is to see if the proportion of samples landing in certain classes is what you
+expect. 
+
+Here we look at the counts of diamonds of different colors in our data set.
+
+``` {r, echo=TRUE}
+
+BarPlot <- ggplot(data = diamonds, aes(x = color, fill = color)) + 
+  geom_bar(stat = "count") + 
+  ggtitle("Color of diamonds")
+print(BarPlot)
+```
+
+If we expected a even distribution of colors, then we can tell from this graph that
+our sample is likely not representative. For instance, the number of color "J" 
+diamonds is less than one-third of color "G" diamonds. The distribution into classes
+is dependent on the context of your problem. If we know ahead of time that color "J"
+is naturally rarer, then this sample would not necessarily be un-representative.
+
+## Scatterplot
+
+When comparing two quantitative variables, you may be testing whether $\beta_1 \neq 0$.
+For this test, you will need to assume that the variables are linearly related.
+You can check this visually by creating a scatter plot with the line of best
+fit graphed.
+
+Here we compare the Price of diamonds with the carats.
+
+```{r}
+ScatterPlot <- ggplot(data = diamonds, aes(x=carat,y=price)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE) + ggtitle("Price vs Carat")
+print(ScatterPlot)
+```
+From this, we can see that the assumption of the linear relationship is mostly 
+violated. For higher carat values, the expected price is not described by the line.
+There seems to be some sort of (perhaps artificial?) maximum price of $20,000.
+
+However, we can still see that there is a strong relationship between carats and
+price (especially between 0 and 1). For the purposes of the project, we may decide
+to continue with the hypothesis test despite our assumption being violated. In some
+cases it may be more appropriate to transform the data to get a linear relationship.
+A common transformation would be to take the logarithm of one or both of the variables:
+
+```{r}
+ScatterPlot <- ggplot(data = diamonds, aes(x=log(carat),y=log(price))) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE) + ggtitle("log(Price) vs log(Carat)")
+print(ScatterPlot)
+```
+After taking the natural log of both variables, then the linear relationship looks
+much stronger! So we may want to change our test to assume a linear relationship
+between the logarithms of both variables.
+
+# Comparing populations
+
+When comparing means from different populations (like trying to show $\mu_1> \mu_2$ for example)
+it is useful to look at the distributions of each population side-by-side. Here
+we are interested in comparing the price of the diamonds based on the cut. One 
+way to compare distributions is with a violin plot.
+
+```{r}
+ViolinPlot <- ggplot(data = diamonds, aes(x=cut, y = price, fill=cut)) + 
+  geom_violin() +
+  ggtitle("Price vs Cut of Diamonds")
+print(ViolinPlot)
+```
+Here we can see that all the distributions are right-skewed (there are a few diamonds
+worth a lot of money for each cut). Comparing the Ideal and Fair cuts, the 
+Ideal cut seem to have the prices strongly centered around $1000 while the Fair
+cut is more evenly distributed from \$0 to $5000. This suggests that the Fair
+cuts diamonds are more valuable on average than the Ideal cut.
+
+If you are comparing proportions from different populations, then a stacked bar
+plot can be useful for that. Here we look at the percentage of colors for each cut
+of diamond:
+```{r}
+StackedBar <- ggplot(diamonds,aes(cut,fill=color))+geom_bar(position="fill") +
+  ggtitle("Percentage of colors based on cut") + ylab("Percentage")
+print(StackedBar)
+```
+
+Looking at the graph, we don't notice too much of a difference between the cuts.
+Depending on what we are interested in, we can make further observations. If we 
+were interested in the proportion of color "E", the we could note that the Fair cut
+seems to have a smaller percentage of that color than other cuts.
