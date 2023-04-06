@@ -1,0 +1,185 @@
+---
+title: "Lab 09: Functions in R and creating new columns"
+output: pdf_document
+---
+
+For the final deliverable, you will need to run hypothesis tests on your data.
+To do this, it will be useful to have the data in R in the right form. This 
+means possibly creating new columns for your data frame or transforming your
+data into the correct form.
+
+# Functions in R
+
+Functions in programming languages allow you to create reusable code that can be updated with new values or parameters. We have already been using functions in this coures: for example `mean(...)` is a function which takes a vector and returns its average value. The syntax for defining a function in R is given by
+
+```
+function_name <- function(arg_1, arg_2, ...) {
+   Function body 
+}
+```
+The `function_name` will be how we call the function later. The `arg_1`, `arg_2`,... are the arguments for the function. These are the values we pass into the function. The function body will be where the code is run using the arguments as variables. A function can also return a value, which can then be set to a variable, print to the screen, etc. In R, the last line with an unassigned value is returned from the function (or you can explicitly use the command `return()`). The function body needs to be enclosed in the braces `{...}` so that R knows where the function begins/ends.
+
+The function below will square the value given and return it.
+
+``` {r, echo = TRUE}
+# Define a function that returns the square of numeric value
+square <- function(x) {
+  # The last unassigned line gets returned.
+  x^2
+}
+
+# Test out the function works
+print(square(2))
+```
+
+We can have as many arguments or lines in the function body as we want. Each line is executed from top to bottom. We just need to hit `Enter` to get a new line.
+```{r, echo=TRUE}
+# Define a function that takes a sum of two numbers and then doubles the sum
+double_sum_of_numbers <- function(a,b) {
+  sum <- a+b
+  # Last unassigned statement is returned from function
+  2*sum
+}
+
+print(double_sum_of_numbers(2,3))
+```
+**Task**: Recall that the variance of a random variable $X$ can be computed by
+$Var(X) = E[X^2] - E[X]^2$. Write a function called `my_var` that will take in
+a list `x` and return its variance. (Hint: use `mean(...)` to compute the 
+average of a list; you can also use `x^2` to square each element of a list).
+Below is the result for running `my_var(c(1,2,4))`.
+
+```{r, echo=FALSE}
+my_var <- function(x) {
+  mean_x_squared = mean(x^2)
+  mean_x_squared - (mean(x))^2
+}
+
+my_var(c(1,2,4))
+```
+
+
+
+# Creating new calculated columns using `with` and `within`
+
+## `with`
+As you have been working on your project, you may have needed to create new columns for your data set. This may have been because you needed to rename some values or because you needed a new column whose values are calculated from the others. A lot of this can be done using methods discussed before. Today we will look into another way to manipulate the data frame, using th `with` and `within` functions. We will also see a way to apply functions to each column or row of a data frame.
+
+Let's first import our data set.
+
+```{r, include=TRUE}
+data("airquality")
+head(airquality)
+```
+The `airquality` data set has measurements of the air quality in New York from May to September of 1973. Use `?airquality` in your console for more information.
+
+The `with` function allows us to evaluate an R expression by using the columns of a data set. This can make for a more convenient way to create new variables or columns. We pass in the data frame to `with` and then write and expression in terms of its columns. It will return the result of those calculations.
+
+Let's suppose that we want to normalize the wind speed, that is, we will subtract the mean wind speed and then divide by the standard deviation.
+```{r, include=TRUE}
+mean_wind <- mean(airquality$Wind)
+sd_wind <- sd(airquality$Wind)
+normalized_wind <- with(airquality, (Wind - mean_wind)/sd_w?logiind)
+head(normalized_wind)
+```
+Our result is a vector with the normalized wind speeds. We can set this to a new column. 
+
+```{r, include=TRUE}
+airquality$NormWind <- normalized_wind
+head(airquality)
+```
+## `within`
+
+The `within` function is similar, but we can return a data frame and can set the result of expression to new columns.
+```{r, include=TRUE}
+#Reload the data set
+data("airquality")
+#Create a new data frame with NormWind column
+head(within(airquality, NormWind <- (Wind - mean_wind)/sd_wind))
+```
+
+This can be particularly useful if you are creating multiple new columns
+```{r}
+new_df <- within(airquality, {
+  NormWind <- (Wind - mean_wind) / sd_wind #Create new column of normalized wind speed
+  DoubleOzone <- Ozone * 2 # Create new column doubling the ozone values
+  MonthPlusPlus <- Month + 1}) # Create new column adding one to the months
+head(new_df)
+```
+
+To save the altered data frame, you should set overwrite the original data frame with `airquality <- within(...)`. As we can se the data frame does not have `NormWind`
+
+```{r}
+head(airquality)
+```
+
+**Task**: Convert the temperature in the data frame from Fahrenheit to Celsius. Save the result in the `Temp` column, overwriting the previous values. A temperature `c` in Celsius is equal to `(f - 32) * 5/9`, where `f` is the same temperature in Fahrenheit. You should get the following output after typing in `head(airquality)`.
+
+```{r, echo=FALSE}
+airquality <- within(airquality, Temp <- (Temp - 32) * 5 / 9)
+head(airquality)
+```
+# Creating new calculated columns using `sapply` and `apply`
+## `sapply`
+The `sapply` function allows use to pass in a vector or list and apply a function to each element of that list. This is useful for running more complicated computations on a vector.  (`vapply` and `lapply` are very similar but return vectors and lists, respectively.)
+
+```{r, include=TRUE}
+data("airquality")
+is_first_of_month <- function(x) {x== 1} #Returns TRUE if x equals 1
+first_days <- sapply(airquality$Day, is_first_of_month)
+head(first_days)
+```
+If we want, we don't need to define the function separately. We can do everything in one line.
+
+```{r, include=TRUE}
+head(sapply(airquality$Day, function(x) {x== 1}))
+```
+
+**Task**: Write a function `is_windy` which tests if a value is greater than `10`. Then use
+`sapply()` on the column `airquality$Wind` and save the result to `windy_day`. Entering
+`head(windy_day)` should give the following result.
+```{r, echo=FALSE}
+is_windy <- function(x) {x > 10}
+windy_day <- sapply(airquality$Wind, is_windy)
+head(windy_day)
+```
+This can be particularly useful in combination with the `switch` function (run `?switch` in the console for more information). As an example, we can convert the integers representing months into string values.
+```{r}
+months_to_strings = function(x) {
+  switch(x, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+         "Aug", "Sep", "Oct", "Nov", "Dec")
+}
+head(sapply(airquality$Month, months_to_strings))
+```
+
+## `apply`
+The `apply` function can be used to apply a function to each row or column of a data set. Similar to `sapply`, we pass in a data set and function. We also specify whether the function will take rows (by passing in `1`) or columns (by passing in `2`).
+
+Here we apply the function `mean` to each *column* of the data frame.
+```{r}
+apply(airquality, 2, mean)
+```
+Using `apply` along columns allows us to compute summary statistics for our data sets.If we want to exclude `NA` values, we can define a new function.
+```{r}
+apply(airquality, 2, function(x) {mean(x, na.rm=TRUE)})
+```
+Using `apply` along rows can allow us to compute new columns. Here we define a function which takes a row of the data frame and adds the third and fourth column values together. These should correspond with `Wind` and `Temp` in `airquality`. Applying this to our data frame gets a new calculated vector.
+```{r}
+weird_function <- function(row){
+  row[3] + row[4]
+}
+head(apply(airquality, 1, weird_function))
+```
+Setting the result of `apply` to a new column (say `airquality$Weird`) will give us a new calculated variable for our data set.
+
+**Task**: Create a function called `strange_function` which takes in a row from `airquality` and multiplies the day by the wind speed. Apply the `strange_function` to  `airquality` along its rows and save the result to `strange_vector`. Running `head(strange_vector)` should give you the following result.
+
+```{r,echo=FALSE}
+strange_function <- function(row){
+  row[3] * row[6]
+}
+strange_vector <- apply(airquality, 1, strange_function)
+head(strange_vector)
+```
+
+**END OF LAB**: We discussed how to create function in R and how to create new calculated columns for our data sets. Try the methods you learned today on your data set. Do you need new columns in your data set? How can use create them with `with` or `apply`?
