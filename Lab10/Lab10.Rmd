@@ -48,7 +48,7 @@ z.test <- function(x, sigma.x, alternative="two.sided", mu0=0, conf.level = 0.95
   p_value <- switch (alternative,
     two.sided = pnorm(-abs(z)) * 2,
     less = pnorm(z),
-    more = pnorm(-abs(z))
+    more = pnorm(-z)
   )
   alpha = 1 - conf.level
   
