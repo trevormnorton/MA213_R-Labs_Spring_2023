@@ -109,7 +109,7 @@ Run the test again to confirm.
 
 To test hypotheses using population proportions, we will be using the function 
 `prop.test`. For the analysis to be valid, we again need to assume that the number
-of samples is sufficiently large (one rule-of-thumb is that $n\hat p, n\hat q \geq 15$).
+of samples is sufficiently large (one rule-of-thumb is that $np_0, nq_0 \geq 15$).
 If we run `prop.test(x,n,p0)` where `x` is the number of successes, `n` is the number
 of samples, and `p0` is the hypothesized probability, then we will get p-values
 for the hypothesis test with $H_a : p\neq p_0$. We can change the alternative
