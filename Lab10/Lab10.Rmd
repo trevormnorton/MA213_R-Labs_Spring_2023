@@ -1,0 +1,195 @@
+---
+title: "Lab 10"
+output: pdf_document
+---
+
+# Hypothesis testing overview
+
+The next deliverable will focus on performing statistical analysis to answer the 
+questions you posed for your project. We will be conducting hypothesis tests for 
+each of the sets of hypotheses, and this is something that can be easily done in
+R. Hypothesis tests can generally be broken up into three steps:
+
+1. Make an assumption about a population (the null hypothesis).
+2. Use a sample to compute a statistic and measure how likely we were to see that statistic *or more extreme values* based on the assumption we made (the p-value).
+3. Make an inference about the null hypothesis based on this measurement.
+
+You've already accomplished step 1 in an earlier deliverable. Step 2 can be done
+with a few lines of code in R. Step 3 can easily be done with the results from step
+2.
+
+Let's do a quick example. Here I've written a function which will carry out a 
+hypothesis test for the mean of a population. Take $\mu_0$ to be the assumed mean
+of the population. If we know the standard deviation $\sigma$ of a population 
+and $n$ is sufficiently large, then we know the sample means $\overline X$ will 
+be approximately normal with mean \(\mu_0\) and standard deviation $\sigma/\sqrt{n}$.
+This allows us to compute probabilities involving $\bar X$ under the assumption 
+that $\mu_0$ is the actual mean.
+
+
+Here is a function that will run a hypothesis test in this case. You don't have
+to understand everything here, just get a sense of what's going on.
+```{r}
+# Define a function which will perform a hypothesis test on the mean of a population
+# x: the sample data
+# sigma.x: the known standard deviation of the population
+# alternative: this designates our alternative hypothesis; the default is mu=/=mu0
+# mu0: the hypothesized mean of the population; the default is mu0 = 0
+# conf.level: this is 1 - alpha where alpha is the probability of a Type I error
+z.test <- function(x, sigma.x, alternative="two.sided", mu0=0, conf.level = 0.95) {
+  n = length(x)
+  x.bar <- mean(x)
+  
+  # Compute the z-value of x.bar
+  z <- (x.bar - mu0) / (sigma.x / sqrt(n))
+  
+  # Using the standard normal distribution, we can compute the p-value of our
+  # test statistic
+  p_value <- switch (alternative,
+    two.sided = pnorm(-abs(z)) * 2,
+    less = pnorm(z),
+    more = pnorm(-abs(z))
+  )
+  alpha = 1 - conf.level
+  
+  # Check the p-value against alpha and decide wheter to reject/fail to reject
+  sprintf("The p-value is %f and so we %s", 
+          p_value, 
+          ifelse(p_value < alpha, 
+                 "reject the null hypothesis", 
+                 "fail to reject  the null hypothesis"))
+}
+```
+
+**Tasks**: Copy the function definition into R to define the function `z.test`.
+We can generate random normal numbers using `rnorm(n)`, where `n` is the size of
+the vector returned. Run `z.test(rnorm(100, mean = 0), sigma.x = 1)` a few times and see what the results are. Does this make sense? Try changing `mean = 0` to other values. How does the change the
+results of our hypothesis test?
+
+# One-sample hypothesis testing
+
+## Hypothesis test for the mean
+
+In practice we will rarely know $\sigma$. So instead of using `z.test` above, we 
+will use `t.test` instead. This test uses the sample standard deviation, $s$, 
+instead of $\sigma$, which requires us to use the t-distribution to compute the 
+p-value instead. For most tests, we will be required to assume that the data come 
+from random, independent samples from the population. In addition, for the 
+analysis of `t.test` to be valid, we need that either 
+
+1. The sample is large (in which case $s\approx \sigma$ and `t.test` will give
+approximately the same result as `z.test`); or
+2. The population is normally distributed.
+
+The first assumption is typically assumed using some heuristic (one rule-of-thumb 
+is to check that the sample size is greater than or equal to $30$). The second assumption
+can be checked by looking at a histogram of the sample and seeing if it is normally
+distributed.
+
+Let's work through an example for testing the mean of a population.
+
+**Tasks**: 
+
+1. Use `data("airquality")` to import a data set making air quality measurements 
+made in New York in 1973. Assume `Wind` represents independent, random samples of
+the wind speed in New York. 
+2. Plot the distribution of the sample of wind speeds using 
+`hist(x = airquality$Wind)`. Does the sample appear normally distributed? 
+3. Run a hypothesis test with $H_0: \mu = 10.5$ and $H_a: \mu \neq 10.5$, taking
+$\alpha = 5\%$. This can be done with `t.test(x = airquality$Wind, mu = 10.5)`. 
+What is the result of the test?
+4. Now run the test again with $H_a: \mu < 10.5$ and the same $\alpha$. This 
+can be done with `t.test(x = airquality$Wind, mu = 10.5,alternative = "less")`. 
+What is the result now?
+5. What would you expect if we change the alternative hypothesis $H_a :\mu > 10.5$?
+Run the test again to confirm.
+
+
+## Hypothesis test for proportions
+
+To test hypotheses using population proportions, we will be using the function 
+`prop.test`. For the analysis to be valid, we again need to assume that the number
+of samples is sufficiently large (one rule-of-thumb is that $n\hat p, n\hat q \geq 15$).
+If we run `prop.test(x,n,p0)` where `x` is the number of successes, `n` is the number
+of samples, and `p0` is the hypothesized probability, then we will get p-values
+for the hypothesis test with $H_a : p\neq p_0$. We can change the alternative
+hypothesis by specifying `alternative="greater"` or `alternative="less"`.
+
+**Tasks**:
+
+1. Suppose we want to test if a coin is fair (that is, the probability of getting
+a heads is 50%.) Assume we get 58 heads out of 100 flips. Carry out a hypothesis 
+test with alternative hypothesis $H_a : p\neq 0.5$ by running `prop.test(58, 100, p=0.5)`.
+If $\alpha = 5\%$, what is your conclusion?
+2. Run the hypothesis test again but now assuming we have 62 heads. What is the result?
+
+
+# Two-sample hypothesis testing
+
+More commonly, you will be interested in comparing two populations together. 
+Fortunately, this isn't much harder in R.
+
+To use `t.test` to compare means, we must verify that either
+
+1. The sample sizes are sufficiently large; or 
+2. The populations are normally distributed with equal variances.
+
+Again, assumption 2 can be checked by looking at the histograms. To check that
+the variances are equal, we can compute the sample variances in R with `var()` 
+and check that they are approximately equal.
+
+**Tasks**:
+
+1. Let's run a hypothesis test to determine if the wind speeds in New York are different
+in May and August. Run `may_wind <- airquality[airquality$Month == 5, ]$Wind` and 
+`aug_wind <- airquality[airquality$Month == 8, ]$Wind`. Graph histograms of both to confirm
+they are approximately normal. Also, compute the variances to see that they are 
+approximately equal.
+2. Carry out a two-sample hypothesis test with $H_a: \mu_1 \neq \mu_2$ by running
+`t.test(may_wind, aug_wind, var.equal = TRUE)` with $\alpha = 5%$. What is the 
+result?
+3. The samples should be large enough that we do not need to check that the populations
+are normally distributed with equal variances. To do the hypothesis test in this
+case we can run `t.test(may_wind, aug_wind)`. How does the result compared from 
+before?
+
+
+To run a two-sample proportion, we can use `prop.test`. Again we need the samples
+sufficiently large. As an example, suppose we want to test if two coins have the
+same proportion of heads. Flipping both 100 times, we get one coin with 60 heads
+and one coin with 40 heads. Then we can carry out the hypothesis test with 
+$H_a: p_1\neq p_2$ by running `prop.test(c(60, 40), c(100, 100))`. We get the 
+p-value is less than 1%, so at $\alpha = 5%$ we reject the null hypothesis.
+
+# Hypothesis testing for $\beta_1$
+
+When we do linear regression, we get an equation of the form $y = \hat\beta_0 + \hat\beta_1 x$.
+The $\hat\beta_1$ is a sample statistic, and (under some reasonable assumptions)
+it will have a t-distribution. We can therefore also carry out hypothesis tests
+on the *true* value of $\beta_1$. This is useful because it gives us a way to determine
+if two quantitative variables are related.
+
+For the hypothesis test to be valid, we need the following assumptions to hold:
+
+1. The quantitative variables $X$ and $Y$ are linearly related in the sense
+that $Y = \beta_0 + \beta_1 X + \varepsilon$ where $\varepsilon$ is some "random
+noise".
+2. The variance of $\varepsilon$ is constant.
+3. The number of samples is large enough or \(\varepsilon\) is normally distributed.
+
+Assumptions 1 and 2 can be checked by graphing the scatter plot of $X$ and $Y$
+and noting the linear relationship where the distance from the line of best fit 
+does not depend on $X$.
+
+**Tasks**:
+
+1. Let's run a hypothesis test to see that temperature and wind speed are linearly
+related. Run `lin_reg <- lm(airquality$Wind ~ airquality$Temp)` to do the linear
+regression. Now run `plot(x = airquality$Temp, y = airquality$Wind)` and `abline(lin_reg)`
+to get the scatter plot of these variables and the line of best fit. Do the assumptions
+for the test seem to hold?
+2. To run the hypothesis for $H_a :\beta_1 \neq 0$, run `summary(lin_reg)$coefficients`. You
+will get a table of coefficients with the estimated value, corresponding t-statistic,
+and the p-value (should look like `Pr(>|t|)`). What is the p-value for the estimate
+of $\beta_1$ (check the row with `airquality$Temp`)? What conclusion can you make
+about the relationship between the temperature in wind speed in New York?
